@@ -3,12 +3,12 @@ import numpy
 
 class CFLProblem():
     def __init__(self, n, m, facilities_costs, m_cap, clients, transportation_costs):
-        self.n = n
-        self.m = m
-        self.facilities_costs = facilities_costs
-        self.m_cap = m_cap
-        self.clients = clients
-        self.transportation_costs = transportation_costs
+        self.n = n # int
+        self.m = m # int
+        self.facilities_costs = facilities_costs # list(int)
+        self.m_cap = m_cap # int
+        self.clients = clients # list(int)
+        self.transportation_costs = transportation_costs # list( list(int) )
 
     def __str__(self):
         s = "Clients: {0}\n".format(self.n)
@@ -20,21 +20,38 @@ class CFLProblem():
 
         return s
 
-    def asc_sorted_costs(self):
-        '''Return ascending sorted indexes of facilities costs'''
+    def sorted_facility_costs(self, reverse = False):
+        '''Return sorted indexes of facilities costs'''
         f_costs = list()
-        sorted_costs = list()
+        _sorted = list()
 
         for i in range( len(self.facilities_costs) ):
             f_costs.append( self.facilities_costs[i] )
-        f_costs.sort()
+        f_costs.sort(reverse = reverse)
 
         for i in range( len(f_costs) ):
-            sorted_costs.append(
+            _sorted.append(
                 self.facilities_costs.index(f_costs[i])
             )
 
-        return sorted_costs
+        return _sorted
+
+    def sorted_transportation(self, reverse = False):
+        '''Return sorted indexes of facilities costs'''
+        f_costs = list()
+        _sorted = list()
+
+        for i in range( len(self.transportation_costs) ):
+            row = self.transportation_costs[i]
+            f_costs.append( (sum(row), row) )
+        f_costs.sort(reverse = reverse)
+
+        for i in range( len(f_costs) ):
+            _sorted.append(
+                self.transportation_costs.index(f_costs[i][1])
+            )
+
+        return _sorted
 
     @classmethod
     def attendance_matrix(cls, n, m):
@@ -159,7 +176,44 @@ def heur_sorted_facility_costs(inst, X, Y):
     @param  Y CFLProblem.operating_facilities_list
     @return tuple (inst, X, Y)
     '''
-    f_costs = inst.asc_sorted_costs()
+    f_costs = inst.sorted_facility_costs()
+
+    for y in range( inst.m ):
+        j = f_costs[y]
+        #print('Filling facility {0}'.format(j))
+
+        for x in range( inst.n ):
+
+            if client_attended(X, x) == True: continue
+
+            spent = capacity_spent(inst, X, j)
+            demand = inst.clients[x]
+            attendable = (spent + demand <= inst.m_cap)
+
+            #print('j = {j}; i = {i}; demand = {d}; occupied = {o}; total = {t}'.format(
+            #    i = x,
+            #    j = j,
+            #    d = demand,
+            #    o = spent,
+            #    t = demand + spent
+            #))
+
+            if attendable == True:
+                X[j][x] = 1
+                Y[j] = 1
+
+    return (inst, X, Y)
+
+def heur_sorted_transportation_costs(inst, X, Y):
+    '''Heuristic to solve CFLP by sorting facilities by their sum of transportation cost
+    in ascending order, and then picking their clients as they can.
+
+    @param  inst CFLProblem
+    @param  X CFLProblem.attendance_matrix
+    @param  Y CFLProblem.operating_facilities_list
+    @return tuple (inst, X, Y)
+    '''
+    f_costs = inst.sorted_transportation()
 
     for y in range( inst.m ):
         j = f_costs[y]
