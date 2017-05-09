@@ -41,11 +41,10 @@ def randint_list(n, _min, _max):
     return l
 
 def gen_clients_demands(n, m, m_cap):
-    clients_demands = list()
     total_cap = m * m_cap
-    top = int( total_cap / n )
+    top = int( total_cap / n ) - int( m_cap * 0.1)
 
-    clients_demand = randint_list(n, math.floor(0.7 * top), top)
+    clients_demand = randint_list(n, math.floor(0.5 * top), top)
 
     #clients_demand = randint_list(n-1, math.floor(0.7 * top), top)
     # For the last client we substract the sum of all previous clients demands
