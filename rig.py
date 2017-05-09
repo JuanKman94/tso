@@ -30,7 +30,7 @@ Where <client demands> is the random-generated capacity for client <i>,
 for <i> from 1 through <n>. Each line is a client's capacity, thus the
 instance file has a total of <n> + 1 lines.
 
-Example: {0} 50 16 1500-2000 5000 75-100'''
+Example: {0} 20 10 1500-2000 5000 75-100'''
 
 def randint_list(n, _min, _max):
     l = list()
