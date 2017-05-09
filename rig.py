@@ -6,11 +6,13 @@ import math
 
 HELP = '''Random Instance Generator
 
-Usage: {0} <n> <m> <capacity> <cost>-<range> [<K>]
+Usage: {0} <n> <m> <plant-cost>-<range> <capacity> <cost>-<range> [<K>]
 
 Where:
     * <n> number of clients.
     * <m> number of facilities.
+    * <plant-cost> for keeping the plant open; random number
+      between <cost> and <range>.
     * <capacity> fixed for each facility.
     * <cost> for transportation from facility to client; random number
       between <cost> and <range>.
@@ -20,14 +22,15 @@ Instances are written to file cflp_<n>_<m>_<capacity>_<cost>-<k>.dat,
 where k is the instance number; the contents of such file is:
 
     <n> <m> <capacity>
-    <clients demands>
+    <plants costs>
     <facility-client costs matrix [n x m]>
+    <clients demands>
 
-Where <client capacity> is the random-generated capacity for client <i>,
+Where <client demands> is the random-generated capacity for client <i>,
 for <i> from 1 through <n>. Each line is a client's capacity, thus the
 instance file has a total of <n> + 1 lines.
 
-Example: {0} 50 16 5000 75-100'''
+Example: {0} 50 16 1500-2000 5000 75-100'''
 
 def randint_list(n, _min, _max):
     l = list()
@@ -42,13 +45,14 @@ def gen_clients_demands(n, m, m_cap):
     total_cap = m * m_cap
     top = int( total_cap / n )
 
-    clients_demand = randint_list(n-1, math.floor(0.9 * top), math.ceil( 1.1 * top))
+    clients_demand = randint_list(n, math.floor(0.7 * top), top)
 
+    #clients_demand = randint_list(n-1, math.floor(0.7 * top), top)
     # For the last client we substract the sum of all previous clients demands
     # from the total capacity
-    x = - total_cap + sum( clients_demand )
-    x = math.fabs( x )
-    clients_demand.append( int( x ) )
+    #x = - total_cap + sum( clients_demand )
+    #x = math.fabs( x )
+    #clients_demand.append( int( x ) )
 
     return clients_demand
 
@@ -70,16 +74,22 @@ if len( sys.argv ) < 5:
 n = math.floor( float(sys.argv[1]) )
 m = math.floor( float(sys.argv[2]) )
 
-cap = math.floor( float(sys.argv[3]) )
+# Parse the cost of transportations
+ran = sys.argv[3]
+if ran.count('-') != 1:
+    raise ValueError('Error parsing cost range.')
+plant_cost_min, plant_cost_max = int(ran.split('-')[0]), int(ran.split('-')[1])
+
+cap = math.floor( float(sys.argv[4]) )
 
 # Parse the cost of transportations
-ran = sys.argv[4]
+ran = sys.argv[5]
 if ran.count('-') != 1:
     raise ValueError('Error parsing cost range.')
 cost_min, cost_max = int(ran.split('-')[0]), int(ran.split('-')[1])
 
 K = 1
-if len( sys.argv) > 5: K = math.floor( float(sys.argv[5]) )
+if len( sys.argv) > 6: K = math.floor( float(sys.argv[6]) )
 
 try:
     for k in range(K):
@@ -89,8 +99,6 @@ try:
         fhandle = open(fname, 'w')
         print('Generating instance {0}... '.format(fname), end='')
 
-        inst = gen_clients_demands(n, m, cap)
-
         desc = '''{n} {m} {capacity}\n'''.format(
             n = n,
             m = m,
@@ -98,8 +106,9 @@ try:
         )
         fhandle.write(desc)
 
-        for i in range( len(inst) ):
-            fhandle.write( "{0}\n".format(inst[i]) )
+        plants_costs = randint_list(m, plant_cost_min, plant_cost_max)
+        for i in range( len(plants_costs) ):
+            fhandle.write( "{0}\n".format(plants_costs[i]) )
 
         costs_matrix = gen_instance_costs(n, m, cost_min, cost_max)
 
@@ -112,6 +121,10 @@ try:
             line = line.rstrip()
 
             fhandle.write("{line}\n".format(line = line))
+
+        inst = gen_clients_demands(n, m, cap)
+        for i in range( len(inst) ):
+            fhandle.write( "{0}\n".format(inst[i]) )
 
         print('Done!')
         fhandle.close()
