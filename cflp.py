@@ -13,10 +13,10 @@ class CFLProblem():
     def __str__(self):
         s = "Clients: {0}\n".format(self.n)
         s += "Facilities: {0}\n".format(self.m)
-        s += "Facilities costs: ({0}) {1}\n".format(sum(self.facilities_costs), self.facilities_costs)
         s += "Fixed facility capacity: {0} ({1})\n".format(self.m_cap, self.m * self.m_cap)
-        s += "Transportation costs: {0}\n".format(self.transportation_costs)
-        s += "Clients: ({0}) {1}".format(sum(self.clients), self.clients)
+        s += "Facilities costs: ({0}) {1}\n".format(sum(self.facilities_costs), self.facilities_costs)
+        s += "Clients: ({0}) {1}\n".format(sum(self.clients), self.clients)
+        s += "Transportation costs: {0}".format(self.transportation_costs)
 
         return s
 
@@ -158,8 +158,7 @@ def total_transportation_cost(cflproblem, X):
 
     try:
         for x in range( len(X) ):
-            row = X[x]
-            for y in range( len(row) ):
+            for y in range( len(X[x]) ):
                 if X[x][y] == 1:
                     cost += cflproblem.transportation_costs[x][y]
     except IndexError as ex:
