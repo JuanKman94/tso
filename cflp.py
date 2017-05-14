@@ -20,6 +20,40 @@ class CFLProblem():
 
         return s
 
+    def is_valid(self, X, Y):
+        return self.facilities_can_supply(X) and self.all_clients_served(Y)
+        return True
+
+    # paper's model formula 3
+    def facilities_can_supply(self, X):
+        '''Validate each facility can supply their assigned clients'''
+        for x in range( len(X) ):
+            j = X[x]
+            demand_j = 0 # demand for facility j
+            for i in range( len(j) ):
+                if j[i] == 1: # if facility j serves client i
+                    demand_j += self.clients[i] # add client's demand
+
+            # if facility's capacity can't cover the assigned demand
+            if self.m_cap < demand_j:
+                return False
+
+        return True
+
+    # paper's model formula 4
+    def all_clients_served(self, Y):
+        total_demand = sum(self.clients)
+        opened_facilities = 0
+
+        for y in range( len(Y) ):
+            if Y[y] == 1: # if facility y is open
+                opened_facilities += 1
+
+        total_supply = opened_facilities * self.m_cap
+
+        return total_supply >= total_demand
+
+
     def sorted_facility_costs(self, reverse = False):
         '''Return sorted indexes of facilities costs'''
         f_costs = list()

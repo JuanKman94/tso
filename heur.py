@@ -53,6 +53,10 @@ h1_Y = cflp.CFLProblem.operating_facilities_list(inst.m)
 
 (inst, h1_X, h1_Y) = cflp.heur_sorted_facility_costs(inst, h1_X, h1_Y)
 
+if not inst.is_valid(h1_X, h1_Y):
+    print('No feasible solution found')
+    sys.exit(1)
+
 print_heur_stats(inst, h1_X, h1_Y, 1)
 
 ## End Heuristic 1 ##
@@ -62,6 +66,10 @@ print_heur_stats(inst, h1_X, h1_Y, 1)
 #h2_Y = cflp.CFLProblem.operating_facilities_list(inst.m)
 #
 #(inst, h2_X, h2_Y) = cflp.heur_sorted_transportation_costs(inst, h2_X, h2_Y)
+#
+#if not inst.is_valid(h2_X, h2_Y):
+#    print('No feasible solution found')
+#    sys.exit(1)
 #
 #print_heur_stats(inst, h2_X, h2_Y, 2)
 
