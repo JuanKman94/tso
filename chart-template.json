@@ -1,0 +1,51 @@
+{
+    "data": {
+        "datasets": [
+            {
+                "backgroundColor": "#f00",
+                "borderColor": "#f00",
+                "data": [
+                ],
+                "fill": false,
+                "label": "Heur\u00edstica 1"
+            }
+        ]
+    },
+    "options": {
+        "hover": {
+            "intersect": true,
+            "mode": "nearest"
+        },
+        "scales": {
+            "xAxes": [
+                {
+                    "display": true,
+                    "position": "bottom",
+                    "scaleLabel": {
+                        "display": true,
+                        "labelString": "Instancia"
+                    },
+                    "type": "linear"
+                }
+            ],
+            "yAxes": [
+                {
+                    "display": true,
+                    "scaleLabel": {
+                        "display": true,
+                        "labelString": "Costo"
+                    }
+                }
+            ]
+        },
+        "title": {
+            "display": true,
+            "text": "Resultados de heur\u00edsitcas"
+        },
+        "tooltips": {
+            "intersect": false,
+            "mode": "index"
+        }
+    },
+    "type": "line"
+}

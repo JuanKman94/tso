@@ -10,4 +10,6 @@ Un buen escenario para pruebas se genera con:
 ```bash
 $ ./rig.py 12 10 1500-2000 5000 75-100 10
 $ for i in $(seq 1 10); do ./heur.py cflp_12_10_5000-$i.dat; echo "============"; done
+# to store heuristic results for visualization using chartjs
+$ for i in $(seq 1 30); do ./heur.py cflp_20_10_5000-$i.dat; done | ./chartifier.py 2 # 2 means second results line in chart
 ```
