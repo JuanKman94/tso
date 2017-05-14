@@ -27,20 +27,25 @@ while True:
     except EOFError as ex:
         break
 
+template = 'chart-template.json'
+existing = 'chartjs.json'
 try:
-    chart_file = open('chart-template.json', 'r')
-    chart = json.load(chart_file)
-except Exception as ex:
-    print('Error parsing chartjs json')
-    sys.exit(1)
+    chart_file = open(existing, 'r')
+except IOError:
+    try:
+        chart_file = open(template, 'r')
+    except IOError:
+        print('Error parsing input json')
+        sys.exit(1)
 
+chart = json.load(chart_file)
 # close json file to write to it later
 chart_file.close()
 
 try:
     dataset = chart['data']['datasets'][HEUR-1]
 except IndexError:
-    dataset = { 'label': 'Heuristica ' + str(HEUR), 'fill': False }
+    dataset = { 'label': 'Heurística ' + str(HEUR), 'fill': False }
     chart['data']['datasets'].append( dataset )
 
 dataset['data'] = arr

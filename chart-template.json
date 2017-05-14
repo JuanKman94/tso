@@ -8,6 +8,14 @@
                 ],
                 "fill": false,
                 "label": "Heur\u00edstica 1"
+            },
+            {
+                "backgroundColor": "#00f",
+                "borderColor": "#00f",
+                "data": [
+                ],
+                "fill": false,
+                "label": "Heur\u00edstica 2"
             }
         ]
     },
