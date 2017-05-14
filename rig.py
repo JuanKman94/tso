@@ -6,7 +6,7 @@ import math
 
 HELP = '''Random Instance Generator
 
-Usage: {0} <n> <m> <plant-cost>-<range> <capacity> <cost>-<range> [<K>]
+Usage: {0} <n> <m> <plant-cost>-<range> <capacity> <cost>-<range> [<K>] [<dir>]
 
 Where:
     * <n> number of clients.
@@ -17,6 +17,7 @@ Where:
     * <cost> for transportation from facility to client; random number
       between <cost> and <range>.
     * <K> optional number instances to be generated, default 1.
+    * <dir> optional directory to which write files, default CWD.
 
 Instances are written to file cflp_<n>_<m>_<capacity>_<cost>-<k>.dat,
 where k is the instance number; the contents of such file is:
@@ -90,10 +91,13 @@ cost_min, cost_max = int(ran.split('-')[0]), int(ran.split('-')[1])
 K = 1
 if len( sys.argv) > 6: K = math.floor( float(sys.argv[6]) )
 
+OUTPUT_DIR = '.'
+if len( sys.argv) > 7: OUTPUT_DIR = str(sys.argv[7])
+
 try:
     for k in range(K):
-        fname = "cflp_{0}_{1}_{2}-{3}.dat".format(
-                    n, m, cap, k+1
+        fname = "{out_dir}/cflp_{0}_{1}_{2}-{3}.dat".format(
+                    n, m, cap, k+1, out_dir = OUTPUT_DIR
                 )
         fhandle = open(fname, 'w')
         print('Generating instance {0}... '.format(fname), end='')
