@@ -101,10 +101,13 @@ class CFLProblem():
 
     @classmethod
     def from_instance(cls, fname):
-        '''Return object with data loaded from instance file'''
+        '''Return tubple with CFLProblem instance from file plus
+        Y and X solutions matrix, filled when available'''
         clients = list()
         n, m, m_cap = 1, 1, 1
         facilities_costs, costs_matrix = list([ list() ]), list([ list() ])
+        Y = None
+        X = None
 
         try:
             fhandle = open(fname, 'r')
@@ -139,13 +142,37 @@ class CFLProblem():
                 line = fhandle.readline()
                 clients.append( int(line) )
 
+            # attempt to read solution matrix
+            _Y = fhandle.readline()
+
+            if _Y != '':
+                # recreate them with appropiate length
+                Y = numpy.zeros(m, dtype=numpy.int)
+                X = numpy.zeros((m, n), dtype=numpy.int)
+
+                _Y = _Y.split()
+                for j in range(len(_Y)):
+                    Y[j] = int(_Y[j])
+
+                # read distributions matrix
+                for j in range(m):
+                    _x = fhandle.readline()
+                    _x = _x.split()
+                    for i in range( len(_x) ):
+                        X[j][i] = _x[i]
+
             fhandle.close()
         except IOError as ex:
             print('There was an error reading the instance')
             raise Exception
             sys.exit(1)
 
-        return cls(n, m, facilities_costs, m_cap, clients, costs_matrix)
+        instance = cls(n, m, facilities_costs, m_cap, clients, costs_matrix)
+        return (instance, Y, X)
+
+
+
+
 
 def capacity_spent(inst, X, j):
     '''Total capacity spent for facility j
