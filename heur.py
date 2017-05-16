@@ -18,8 +18,8 @@ elif len( sys.argv ) > 2:
     finally:
         HEUR = heur_number
 
-fname = sys.argv[1]
-(inst, Y, X) = cflp.CFLProblem.from_instance(fname)
+FNAME = sys.argv[1]
+(inst, Y, X) = cflp.CFLProblem.from_instance(FNAME)
 
 try:
     if sys.argv.index('--headers'):
@@ -31,30 +31,28 @@ def print_heur_stats(inst, X, Y, heur = None):
     s = ""
 
     # facilities operations costs
-    C_f = cflp.total_facilities_cost(inst, Y)
+    C_f = cflp.facilities_cost(inst, Y)
     # transportation costs
-    C_t = cflp.total_transportation_cost(inst, X)
+    C_t = cflp.transportation_cost(inst, X)
 
     # count operating/open facilities
     operating = 0
     for i in range(len(Y)):
         if Y[i] == 1: operating += 1
 
-    if heur: s = '"' + str(heur) + '", '
+    if heur: s = '"' + str(heur) + '",'
     s += '"{operating}","{operations}","{transportation}","{total}","{y}"'.format(
             operating = operating,
             operations = C_f,
             transportation = C_t,
             total = C_f + C_t,
-            y = Y
+            y = list(Y)
             )
 
     print(s)
 
 def write_heur_solution(inst, Y, X):
-    fname = 'cflp_{0}_{1}_{2}-solution.dat'.format(
-                inst.n, inst.m, inst.m_cap
-            )
+    fname = FNAME.replace('.dat', '-solution.dat')
     try:
         fhandle = open(fname, 'w')
 
@@ -113,7 +111,7 @@ if PRINT_HEADERS:
     print('heuristic,facilities,operations,transportation,total,solution')
 
 
-result_X = cflp.CFLProblem.attendance_matrix(inst.n, inst.m)
+result_X = cflp.CFLProblem.attendance_matrix(inst.m, inst.n)
 result_Y = cflp.CFLProblem.operating_facilities_list(inst.m)
 
 if HEUR == 1:
