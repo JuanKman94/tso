@@ -6,7 +6,7 @@ import math
 
 HELP = '''Random Instance Generator
 
-Usage: {0} <m> <n> <plant-cost>-<range> <capacity> <demand>-<range> [<K>] [<dir>]
+Usage: {0} <m> <n> <plant-cost>-<range> <capacity> <cost>-<range> [<K>] [<dir>]
 
 Where:
     * <m> number of facilities.
