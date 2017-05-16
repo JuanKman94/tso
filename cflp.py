@@ -11,8 +11,8 @@ class CFLProblem():
         self.transportation_costs = transportation_costs # list( list(int) )
 
     def __str__(self):
-        s = "Clients: {0}\n".format(self.n)
-        s += "Facilities: {0}\n".format(self.m)
+        s = "Facilities: {0}\n".format(self.m)
+        s += "Clients: {0}\n".format(self.n)
         s += "Fixed facility capacity: {0} ({1})\n".format(self.m_cap, self.m * self.m_cap)
         s += "Facilities costs: ({0}) {1}\n".format(sum(self.facilities_costs), self.facilities_costs)
         s += "Clients: ({0}) {1}\n".format(sum(self.clients), self.clients)
@@ -24,6 +24,9 @@ class CFLProblem():
         '''Return whether the given solution is valid according constraints
         facilities_can_supply and all_clients_served
         '''
+        supply = self.facilities_can_supply(X)
+        served = self.all_clients_served(Y)
+        print("supply {0}; serve {1}".format(supply, served))
         return self.facilities_can_supply(X) and self.all_clients_served(Y)
 
     # paper's model formula 3
@@ -54,6 +57,7 @@ class CFLProblem():
 
         total_supply = opened_facilities * self.m_cap
 
+        print("{0}/{1}".format(total_demand, total_supply))
         return total_supply >= total_demand
 
 
@@ -206,7 +210,7 @@ def client_attended(X, i):
 
     return False
 
-def total_facilities_cost(cflproblem, Y):
+def facilities_cost(cflproblem, Y):
     cost = 0
     try:
         for j in range( len(Y) ):
@@ -217,7 +221,7 @@ def total_facilities_cost(cflproblem, Y):
 
     return cost
 
-def total_transportation_cost(cflproblem, X):
+def transportation_cost(cflproblem, X):
     cost = 0
 
     try:
@@ -240,14 +244,13 @@ def heur_sorted_facility_costs(inst, X, Y):
     @return tuple (inst, X, Y)
     '''
     f_costs = inst.sorted_facilities()
+    clients = list(inst.clients)
 
     for y in range( inst.m ):
         j = f_costs[y]
-        #print('Filling facility {0}'.format(j))
+        attended = list()
 
-        for x in range( inst.n ):
-
-            if client_attended(X, x) == True: continue
+        for x in range( len(clients) ):
 
             spent = capacity_spent(inst, X, j)
             demand = inst.clients[x]
@@ -264,6 +267,14 @@ def heur_sorted_facility_costs(inst, X, Y):
             if attendable == True:
                 X[j][x] = 1
                 Y[j] = 1
+                attended.append(x)
+
+        # remove now-attended clients
+        for i in range(len(attended)):
+            try:
+                clients.pop( attended[i] )
+            except IndexError:
+                clients.pop(0) # last one
 
     return (inst, X, Y)
 
