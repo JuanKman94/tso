@@ -2,7 +2,7 @@ import sys
 import numpy
 
 class CFLProblem():
-    def __init__(self, n, m, facilities_costs, m_cap, clients, transportation_costs):
+    def __init__(self, m, n, facilities_costs, m_cap, clients, transportation_costs):
         self.n = n # int
         self.m = m # int
         self.facilities_costs = facilities_costs # list(int)
@@ -21,8 +21,10 @@ class CFLProblem():
         return s
 
     def is_valid(self, X, Y):
+        '''Return whether the given solution is valid according constraints
+        facilities_can_supply and all_clients_served
+        '''
         return self.facilities_can_supply(X) and self.all_clients_served(Y)
-        return True
 
     # paper's model formula 3
     def facilities_can_supply(self, X):
@@ -42,6 +44,7 @@ class CFLProblem():
 
     # paper's model formula 4
     def all_clients_served(self, Y):
+        '''Validate every client has their demands fulfilled'''
         total_demand = sum(self.clients)
         opened_facilities = 0
 
@@ -54,7 +57,7 @@ class CFLProblem():
         return total_supply >= total_demand
 
 
-    def sorted_facility_costs(self, reverse = False):
+    def sorted_facilities(self, reverse = False):
         '''Return sorted indexes of facilities costs'''
         f_costs = list()
         _sorted = list()
@@ -71,7 +74,7 @@ class CFLProblem():
         return _sorted
 
     def sorted_transportation(self, reverse = False):
-        '''Return sorted indexes of facilities costs'''
+        '''Return sorted matrix [n x m] of transportations costs'''
         f_costs = list()
         _sorted = list()
 
@@ -88,7 +91,7 @@ class CFLProblem():
         return _sorted
 
     @classmethod
-    def attendance_matrix(cls, n, m):
+    def attendance_matrix(cls, m, n):
         '''Return an [m x n] attendance matrix.
             m[j][i] = 1 if plant j attends client i,
             m[j][i] = 0 otherwise'''
@@ -116,7 +119,7 @@ class CFLProblem():
             line = fhandle.readline()
             values = line.strip().split()
 
-            n, m, = int(values[0]), int(values[1])
+            m, n = int(values[0]), int(values[1])
             m_cap = int(values[2])
 
             facilities_costs = list()
@@ -167,7 +170,7 @@ class CFLProblem():
             raise Exception
             sys.exit(1)
 
-        instance = cls(n, m, facilities_costs, m_cap, clients, costs_matrix)
+        instance = cls(m, n, facilities_costs, m_cap, clients, costs_matrix)
         return (instance, Y, X)
 
 
@@ -236,7 +239,7 @@ def heur_sorted_facility_costs(inst, X, Y):
     @param  Y CFLProblem.operating_facilities_list
     @return tuple (inst, X, Y)
     '''
-    f_costs = inst.sorted_facility_costs()
+    f_costs = inst.sorted_facilities()
 
     for y in range( inst.m ):
         j = f_costs[y]
