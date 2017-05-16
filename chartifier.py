@@ -9,9 +9,14 @@ import sys
 import json
 
 HEUR = 1
+KEY = 'default'
 
 if len(sys.argv) > 1:
     HEUR = int( sys.argv[1] )
+
+# key for output JSON
+if len(sys.argv) > 2:
+    KEY = str( sys.argv[2] )
 
 arr = list()
 x = 1
@@ -20,27 +25,36 @@ while True:
     try:
         line = input()
         values = line.split(',')
-        y = int( values[4].replace('"', '') )
+        total_cost = int( values[4].replace('"', '') )
 
-        arr.append( { 'x': x, 'y': y })
+        arr.append( { 'x': x, 'y': total_cost })
         x += 1
     except EOFError as ex:
         break
 
-template = 'chart-template.json'
 existing = 'chartjs.json'
-try:
-    chart_file = open(existing, 'r')
-except IOError:
-    try:
-        chart_file = open(template, 'r')
-    except IOError:
-        print('Error parsing input json')
-        sys.exit(1)
+template = 'chart-template.json'
 
-chart = json.load(chart_file)
-# close json file to write to it later
-chart_file.close()
+try:
+    existing_chart = open(existing, 'r')
+    chartjs = json.load(existing_chart)
+    existing_chart.close()
+except IOError:
+    chartjs = {}
+
+try:
+    chart_template = open(template, 'r')
+    template = json.load(chart_template)
+    chart_template.close()
+except IOError:
+    print('Error parsing json template')
+    sys.exit(1)
+
+try:
+    chart = chartjs[KEY]
+except KeyError:
+    chartjs[KEY] = template
+    chart = chartjs[KEY]
 
 try:
     dataset = chart['data']['datasets'][HEUR-1]
@@ -57,7 +71,7 @@ except IOError:
     json_file = None
     print('Error opening json for writing, printing to STDOUT')
 
-json_str = json.dumps(chart, indent = 4, sort_keys = True)
+json_str = json.dumps(chartjs, indent = 4, sort_keys = True)
 
 if json_file:
     json_file.write(json_str)
