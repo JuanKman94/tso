@@ -6,11 +6,11 @@ import math
 
 HELP = '''Random Instance Generator
 
-Usage: {0} <n> <m> <plant-cost>-<range> <capacity> <cost>-<range> [<K>] [<dir>]
+Usage: {0} <m> <n> <plant-cost>-<range> <capacity> <demand>-<range> [<K>] [<dir>]
 
 Where:
-    * <n> number of clients.
     * <m> number of facilities.
+    * <n> number of clients.
     * <plant-cost> for keeping the plant open; random number
       between <cost> and <range>.
     * <capacity> fixed for each facility.
@@ -20,18 +20,17 @@ Where:
     * <dir> optional directory to which write files, default CWD.
 
 Instances are written to file cflp_<n>_<m>_<capacity>_<cost>-<k>.dat,
-where k is the instance number; the contents of such file is:
+k is the instance number; the contents of such file is:
 
-    <n> <m> <capacity>
+    <m> <n> <capacity>
     <plants costs>
     <facility-client costs matrix [n x m]>
     <clients demands>
 
-Where <client demands> is the random-generated capacity for client <i>,
-for <i> from 1 through <n>. Each line is a client's capacity, thus the
-instance file has a total of <n> + 1 lines.
+<client demands> is the random-generated capacity for client <i>,
+for <i> from 1 through <n>. Each line is a client's capacity.
 
-Example: {0} 20 10 1500-2000 5000 75-100'''
+Example: {0} 10 20 1500-2000 5000 75-100'''
 
 def randint_list(n, _min, _max):
     l = list()
@@ -71,8 +70,8 @@ if len( sys.argv ) < 5:
     print(HELP.format( sys.argv[0] ))
     sys.exit(1)
 
-n = math.floor( float(sys.argv[1]) )
-m = math.floor( float(sys.argv[2]) )
+m = math.floor( float(sys.argv[1]) )
+n = math.floor( float(sys.argv[2]) )
 
 # Parse the cost of transportations
 ran = sys.argv[3]
@@ -97,7 +96,7 @@ if len( sys.argv) > 7: OUTPUT_DIR = str(sys.argv[7])
 try:
     for k in range(K):
         fname = "{out_dir}/cflp_{0}_{1}_{2}-{3}.dat".format(
-                    n, m, cap, k+1, out_dir = OUTPUT_DIR
+                    m, n, cap, k+1, out_dir = OUTPUT_DIR
                 )
         fhandle = open(fname, 'w')
         print('Generating instance {0}... '.format(fname), end='')
