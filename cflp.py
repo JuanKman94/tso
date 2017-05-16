@@ -24,9 +24,6 @@ class CFLProblem():
         '''Return whether the given solution is valid according constraints
         facilities_can_supply and all_clients_served
         '''
-        supply = self.facilities_can_supply(X)
-        served = self.all_clients_served(Y)
-        print("supply {0}; serve {1}".format(supply, served))
         return self.facilities_can_supply(X) and self.all_clients_served(Y)
 
     # paper's model formula 3
@@ -57,7 +54,6 @@ class CFLProblem():
 
         total_supply = opened_facilities * self.m_cap
 
-        print("{0}/{1}".format(total_demand, total_supply))
         return total_supply >= total_demand
 
 
@@ -244,13 +240,13 @@ def heur_sorted_facility_costs(inst, X, Y):
     @return tuple (inst, X, Y)
     '''
     f_costs = inst.sorted_facilities()
-    clients = list(inst.clients)
 
     for y in range( inst.m ):
         j = f_costs[y]
-        attended = list()
 
-        for x in range( len(clients) ):
+        for x in range( inst.n ):
+
+            if client_attended(X, x) == True: continue
 
             spent = capacity_spent(inst, X, j)
             demand = inst.clients[x]
@@ -267,14 +263,6 @@ def heur_sorted_facility_costs(inst, X, Y):
             if attendable == True:
                 X[j][x] = 1
                 Y[j] = 1
-                attended.append(x)
-
-        # remove now-attended clients
-        for i in range(len(attended)):
-            try:
-                clients.pop( attended[i] )
-            except IndexError:
-                clients.pop(0) # last one
 
     return (inst, X, Y)
 
