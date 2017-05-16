@@ -101,7 +101,7 @@ try:
         fhandle = open(fname, 'w')
         print('Generating instance {0}... '.format(fname), end='')
 
-        desc = '''{n} {m} {capacity}\n'''.format(
+        desc = '''{m} {n} {capacity}\n'''.format(
             n = n,
             m = m,
             capacity = cap
