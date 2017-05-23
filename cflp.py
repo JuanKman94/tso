@@ -56,6 +56,18 @@ class CFLProblem():
 
         return total_supply >= total_demand
 
+    def all_clients_served(self, X):
+        clients = numpy.zeros(self.n, dtype=numpy.int)
+
+        for i in range( len(X) ):
+            for j in range( len(X[i]) ):
+                if X[i][j] == 1:
+                    clients[j] = 1
+
+        for i in range( self.n ):
+            if clients[i] == 0: return False
+        return True
+
     def sorted_facilities(self, reverse = False):
         '''Return sorted indexes of facilities costs'''
         f_costs = list()
