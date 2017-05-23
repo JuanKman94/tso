@@ -57,7 +57,7 @@ def write_heur_solution(inst, Y, X):
         fhandle = open(fname, 'w')
 
 
-        desc = '{n} {m} {cap}'.format(
+        desc = '{m} {n} {cap}'.format(
                     n = inst.n, m = inst.m, cap = inst.m_cap
                 )
         fhandle.write("{0}\n".format(desc))
