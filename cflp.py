@@ -22,9 +22,9 @@ class CFLProblem():
 
     def is_valid(self, X, Y):
         '''Return whether the given solution is valid according constraints
-        facilities_can_supply and all_clients_served
+        facilities_can_supply and enough_capacity
         '''
-        return self.facilities_can_supply(X) and self.all_clients_served(Y)
+        return self.facilities_can_supply(X) and self.enough_capacity(Y)
 
     # paper's model formula 3
     def facilities_can_supply(self, X):
@@ -43,7 +43,7 @@ class CFLProblem():
         return True
 
     # paper's model formula 4
-    def all_clients_served(self, Y):
+    def enough_capacity(self, Y):
         '''Validate every client has their demands fulfilled'''
         total_demand = sum(self.clients)
         opened_facilities = 0
@@ -55,7 +55,6 @@ class CFLProblem():
         total_supply = opened_facilities * self.m_cap
 
         return total_supply >= total_demand
-
 
     def sorted_facilities(self, reverse = False):
         '''Return sorted indexes of facilities costs'''
@@ -216,6 +215,17 @@ def facilities_cost(cflproblem, Y):
         print("Error calculating facilities costs. Incomplete calculation")
 
     return cost
+
+def facility_transportation_cost(cflproblem, X, j):
+    '''Calculate transportation costs for facility j given transportation matrix X'''
+    cost = 0
+
+    for y in range( len(X[j]) ):
+        if X[j][y] == 1:
+            cost += cflproblem.transportation_costs[j][y]
+
+    return cost
+
 
 def transportation_cost(cflproblem, X):
     cost = 0
