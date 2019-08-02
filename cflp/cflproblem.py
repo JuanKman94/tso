@@ -1,8 +1,9 @@
 import sys
 import numpy
+import cflparameters
 
 class CFLProblem():
-    def __init__(self, m, n, facilities_costs, m_cap, clients, transportation_costs):
+    def __init__(self, params: CFLParameters):
         self.n = n # int
         self.m = m # int
         self.facilities_costs = facilities_costs # list(int)
@@ -113,10 +114,12 @@ class CFLProblem():
         '''Return a list with m integers with value 0'''
         return numpy.zeros( m, dtype=numpy.int)
 
+    """
+    Return tubple with CFLProblem instance from (RIG instance) file, plus
+    Y and X solutions matrix, filled when available
+    """
     @classmethod
     def from_instance(cls, fname):
-        '''Return tubple with CFLProblem instance from file plus
-        Y and X solutions matrix, filled when available'''
         clients = list()
         n, m, m_cap = 1, 1, 1
         facilities_costs, costs_matrix = list([ list() ]), list([ list() ])
